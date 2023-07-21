@@ -72,4 +72,18 @@ func TestDecoder(t *testing.T) {
 		err := urlvaluescanner.Unmarshal(uv, &dto)
 		tt.AssertErrContains(t, err, "missing", "query param", "name")
 	})
+
+	t.Run("should unmarshal any types != string using yaml.Unmarshal", func(t *testing.T) {
+		uv := url.Values{
+			"someInt": []string{"42"},
+		}
+
+		var dto struct {
+			SomeInt int `schema:"someInt"`
+		}
+		err := urlvaluescanner.Unmarshal(uv, &dto)
+		tt.AssertNoErr(t, err)
+
+		tt.AssertEqual(t, dto.SomeInt, 42)
+	})
 }

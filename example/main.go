@@ -1,7 +1,5 @@
+package main
 
-## How to use it
-
-```golang
 import (
 	"fmt"
 	"log"
@@ -27,6 +25,5 @@ func main() {
 		log.Fatalf("error decoding url values: %s", err)
 	}
 
-	fmt.Printf("%+v\n", dto) // {Name:some name Types:[type1 type2] Age:42}
+	fmt.Printf("%+v\n", dto)
 }
-```

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/vingarcia/structscanner"
+	"gopkg.in/yaml.v3"
 )
 
 func Unmarshal(uv url.Values, obj any) error {
@@ -34,14 +35,22 @@ func (e decoder) DecodeField(info structscanner.Field) (any, error) {
 		required = (tag[1] == "required")
 	}
 
-	v, ok := e.sourceValues[key]
+	value, ok := e.sourceValues[key]
 	if !ok && required {
 		return nil, fmt.Errorf("missing required query param: '%s'", key)
 	}
 
-	if info.Kind == reflect.Slice {
-		return v, nil
+	if info.Kind == reflect.String {
+		return value[0], nil
+	} else if info.Kind == reflect.Slice {
+		return value, nil
 	}
 
-	return v[0], nil
+	v := reflect.New(info.Type)
+	err := yaml.Unmarshal([]byte(value[0]), v.Interface())
+	if err != nil {
+		return nil, fmt.Errorf("unable to convert input value '%s=%s' to type %v: %w", key, value[0], info.Type, err)
+	}
+
+	return v.Elem().Interface(), nil
 }
