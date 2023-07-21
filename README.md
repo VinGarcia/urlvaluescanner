@@ -3,13 +3,13 @@
 
 ```golang
 uv := url.Values{
-	"name": []string{"fakeName"},
-	"type": []string{"fakeType"},
+	"name": []string{"some name"},
+	"type": []string{"type1", "type2"},
 }
 
 var dto struct {
 	Name string `schema:"name"`
-	Type string `schema:"type,required"`
+	Types []string `schema:"type,required"`
 }
 err := urlvaluescanner.Unmarshal(uv, &dto)
 ```
